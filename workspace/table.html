@@ -17,6 +17,18 @@
 	.table input{width:50px;}
 	.wd1{width:50px;}.wd2{width:100px;}
 	</style>
+	
+	<script>
+		$(function(){	
+
+			//简写形式，效果相同
+			$.getJSON("http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?",
+					function(data){
+						alert("Result:"+data.result)
+			});
+
+		});
+	</script>
 	</head>
 
 	<body>
@@ -29,9 +41,7 @@
 								<a class="panel-title" data-toggle="collapse" data-parent="#panel-1" href="#panel-element-1-1">Collapsible Group Item #1</a>
 							</div>
 							<div id="panel-element-1-1" class="panel-collapse collapse in">
-								<div class="panel-body">
-									<div class="box box-element ui-draggable" style="display: block;"> 
-										<div class="view">
+
 											<table class="table table-hover" contenteditable="true">
 												<thead>
 													<tr>
@@ -86,9 +96,7 @@
 													</tr>
 												</tbody>
 											</table>
-										</div>
-									</div>	
-								</div>
+
 							</div>
 						</div>
 					</div>

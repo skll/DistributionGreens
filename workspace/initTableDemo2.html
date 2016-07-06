@@ -1,0 +1,253 @@
+$(function () {
+  
+    //1.初始化Table
+    var oTable = new TableInit();
+    oTable.Init();
+  
+    //2.初始化Button的点击事件
+    /* var oButtonInit = new ButtonInit();
+    oButtonInit.Init(); */
+  
+  });
+  
+  
+  var TableInit = function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+      $('#tradeList').bootstrapTable({
+        url: '/VenderManager/TradeList',     //请求后台的URL（*）
+        method: 'post',           //请求方式（*）
+        toolbar: '#toolbar',        //工具按钮用哪个容器
+        striped: true,           //是否显示行间隔色
+        cache: false,            //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,          //是否显示分页（*）
+        sortable: false,           //是否启用排序
+        sortOrder: "asc",          //排序方式
+        queryParams: oTableInit.queryParams,//传递参数（*）
+        sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber:1,            //初始化加载第一页，默认第一页
+        pageSize: 50,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],    //可供选择的每页的行数（*）
+        strictSearch: true,
+        clickToSelect: true,        //是否启用点击选中行
+        height: 460,            //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "id",           //每一行的唯一标识，一般为主键列
+        cardView: false,          //是否显示详细视图
+        detailView: false,          //是否显示父子表
+        columns: [{
+          field: 'id',
+          title: '序号'
+        }, {
+          field: 'liushuiid',
+          title: '交易编号'
+        }, {
+          field: 'orderid',
+          title: '订单号'
+        }, {
+          field: 'receivetime',
+          title: '交易时间'
+        }, {
+          field: 'price',
+          title: '金额'
+        }, {
+          field: 'coin_credit',
+          title: '投入硬币'
+        }, {
+          field: 'bill_credit',
+          title: '投入纸币'
+        }, {
+          field: 'changes',
+          title: '找零'
+        }, {
+          field: 'tradetype',
+          title: '交易类型'
+        },{
+          field: 'goodmachineid',
+          title: '货机号'
+        },{
+          field: 'inneridname',
+          title: '货道号'
+        },{
+          field: 'goodsName',
+          title: '商品名称'
+        }, {
+          field: 'changestatus',
+          title: '支付'
+        },{
+          field: 'sendstatus',
+          title: '出货'
+        },]
+      });
+    };
+  
+    //得到查询的参数
+   oTableInit.queryParams = function (params) {
+      var temp = {  //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+        limit: params.limit,  //页面大小
+        offset: params.offset, //页码
+        sdate: $("#stratTime").val(),
+        edate: $("#endTime").val(),
+        sellerid: $("#sellerid").val(),
+        orderid: $("#orderid").val(),
+        CardNumber: $("#CardNumber").val(),
+        maxrows: params.limit,
+        pageindex:params.pageNumber,
+        portid: $("#portid").val(),
+        CardNumber: $("#CardNumber").val(),
+        tradetype:$('input:radio[name="tradetype"]:checked').val(),
+        success:$('input:radio[name="success"]:checked').val(),
+      };
+      return temp;
+    };
+    return oTableInit;
+  };
+ field字段必须与服务器端返回的字段对应才会显示出数据。
+3、后台获取数据
+    a、servlet获取数据
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+BufferedReader bufr = new BufferedReader(
+  new InputStreamReader(request.getInputStream(),"UTF-8"));
+  StringBuilder sBuilder = new StringBuilder("");
+  String temp = "";
+  while((temp = bufr.readLine()) != null){
+      sBuilder.append(temp);
+   }
+  bufr.close();
+  String json = sBuilder.toString();
+  JSONObject json1 = JSONObject.fromObject(json);
+  String sdate= json1.getString("sdate");//通过此方法获取前端数据
+    ...
+   b、springMvc Controller里面对应的方法获取数据
+?
+1
+2
+3
+4
+public JsonResult GetDepartment(int limit, int offset, string orderId, string SellerId，PortId，CardNumber，Success，maxrows，tradetype)
+{
+ ...
+}
+ 4、分页(遇到问题最多的)
+使用分页，server端返回的数据必须包括rows和total，代码如下：
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+...<br>gblst = SqlADO.getTradeList(sql,pageindex,maxrows);
+JSONArray jsonData=new JSONArray();
+    JSONObject jo=null;
+    for (int i=0,len=gblst.size();i<len;i++)
+    {
+      TradeBean tb = gblst.get(i);
+      if(tb==null)
+      {
+        continue;
+      }
+      jo=new JSONObject();
+      jo.put("id", i+1);
+      jo.put("liushuiid", tb.getLiushuiid());
+      jo.put("price", String.format("%1.2f",tb.getPrice()/100.0));
+      jo.put("mobilephone", tb.getMobilephone());
+      jo.put("receivetime", ToolBox.getYMDHMS(tb.getReceivetime()));
+      jo.put("tradetype", clsConst.TRADE_TYPE_DES[tb.getTradetype()]);
+      jo.put("changestatus", (tb.getChangestatus()!=0)?"成功":"失败");
+      jo.put("sendstatus", (tb.getSendstatus()!=0)?"成功":"失败");
+      jo.put("bill_credit", String.format("%1.2f",tb.getBill_credit()/100.0));
+            jo.put("changes",String.format("%1.2f",tb.getChanges()/100.0));
+      jo.put("goodroadid", tb.getGoodroadid());
+      jo.put("SmsContent", tb.getSmsContent());
+      jo.put("orderid", tb.getOrderid());
+      jo.put("goodsName", tb.getGoodsName());
+      jo.put("inneridname", tb.getInneridname());
+      jo.put("xmlstr", tb.getXmlstr());
+        
+      jsonData.add(jo);
+    }
+    int TotalCount=SqlADO.getTradeRowsCount(sql);
+    JSONObject jsonObject=new JSONObject();
+    jsonObject.put("rows", jsonData);//JSONArray
+    jsonObject.put("total",TotalCount);//总记录数
+    out.print(jsonObject.toString());    <br>...    
+ 5、分页界面内容介绍
+
+前端获取分页数据，代码如下：
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+...<br>oTableInit.queryParams = function (params) {
+      var temp = {  //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+        limit: params.limit,  //第几条记录
+        offset: params.offset, //显示一页多少记录
+        sdate: $("#stratTime").val(),
+  
+      };
+      return temp;
+    };<br>...
+ 后端获取分页数据,代码如下：
+?
+1
+2
+3
+4
+5
+6
+7
+...<br>int pageindex=0;
+int offset = ToolBox.filterInt(json1.getString("offset"));
+int limit = ToolBox.filterInt(json1.getString("limit"));  
+if(offset !=0){
+  pageindex = offset/limit;
+}
+  pageindex+= 1;//第几页<br>...
