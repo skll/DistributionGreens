@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <title>用户管理</title>
+    
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../bootstrap-table/bootstrap-table.css">
+
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../bootstrap-table/bootstrap-table.js"></script>
+    <script>
+		$(function(){	
+
+			//简写形式，效果相同
+			$.getJSON("http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?",
+					function(data){
+						alert("Result:"+data)
+			});
+
+		});
+	</script>
+</head>
+<body>
+    <div class="container">
+        <div id="toolbar">
+            <div class="form-inline" role="form">               
+                <div class="form-group">
+                    <input name="search" class="form-control" type="text" placeholder="Search">
+                </div>
+                <button id="searchform" type="submit" class="btn btn-default">搜索</button>
+            </div>
+        </div>
+        <table id="userlist"
+               data-toggle="table"
+               data-height="460"
+               data-toolbar="#toolbar"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-columns="true"
+               data-query-params="queryParams"
+               data-response-handler="responseHandler"
+               data-url="http://issues.wenzhixin.net.cn/examples/bootstrap_table/data"
+               data-cache="true">
+            <thead>
+            <tr>
+            	<th data-field="ids" data-checkbox="true"></th>
+                <th data-field="id">ID</th>
+                <th data-field="account">用户名</th>
+                <th data-field="username">姓名</th>
+                <th data-field="job">职务</th>
+                <th data-field="mobilephone">电话</th>
+                <th data-field="email">邮箱</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+<script>
+    var $table = $('#userlist'),
+        $searchform = $('#searchform');
+    $(function () {
+        $searchform.click(function () {
+            $table.bootstrapTable('refresh');
+        });
+    });
+    function queryParams() {
+        var params = {};
+        $('#toolbar').find('input[name]').each(function () {
+            params[$(this).attr('name')] = $(this).val();
+        });
+        return params;
+    }
+    function responseHandler(res) {
+        return res.rows;
+    }
+</script>
+</body>
+</html>
