@@ -13,14 +13,17 @@
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
     <script src="../../bootstrap-table/bootstrap-table.js"></script>
     <script src="../../bootstrap-table/mobile/bootstrap-table-mobile.js"></script>
+    <script src="../../bootstrap-table/bootstrap-table-zh-CN.js"></script>
 </head>
 <body>
 <div class="container">
-    <h1>用户列表</h1>
 	<div id="toolbar">
 		<div class="form-inline" role="form">
 			<div class="form-group">
-				<input id="formSearch" class="form-control" type="text" placeholder="请输入搜索条件">
+				<input id="id_search" class="form-control" style="width:150px;" type="text" placeholder="请输入ID">
+			</div>
+			<div class="form-group">
+				<input id="username_search" class="form-control" style="width:150px;" type="text" placeholder="请输入姓名">
 			</div>
 
 			<button id="searchSubmit" type="button" class="btn btn-default">搜索</button>
@@ -31,6 +34,7 @@
 			data-toolbar="#toolbar"
            data-toggle="table"
 		   data-url="http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?"
+		   data-striped="true"
            data-mobile-responsive="true"
            data-check-on-init="true"
 		   data-pagination="true"
@@ -40,11 +44,11 @@
 		   data-query-params="queryParams">
         <thead>
         <tr>
-			<th data-field="ids" data-checkbox="true">ID</th>
+			<th data-field="ids" data-checkbox="true"></th>
             <th data-field="id">ID</th>
-            <th data-field="username" data-sortable="true">username</th>
-            <th data-field="job" data-sortable="true">job</th>
-			<th data-field="mobilephone" data-sortable="mobilephone">job</th>
+            <th data-field="username" data-sortable="true">姓名</th>
+            <th data-field="job" data-sortable="true">职务</th>
+			<th data-field="mobilephone" data-sortable="mobilephone">手机号码</th>
         </tr>
         </thead>
     </table>
@@ -61,7 +65,8 @@
             offset: params.offset,  //页码
             order: params.order,
             ordername : params.sort,
-			search : $("#formSearch").val()
+			id_search : $("#id_search").val(),
+			username_search : $("#username_search").val()
         };
         return temp;
     };
@@ -79,12 +84,14 @@
 	
 	
 	$(function () {
+		//绑定搜索按钮
         $searchSubmit.click(function () {
             $table.bootstrapTable('refresh');
         });
-		
+		//绑定清空按钮
 		$clearSearch.click(function(){
-			document.getElementById("formSearch").value = "";
+			document.getElementById("id_search").value = "";
+			document.getElementById("username_search").value = "";
 		});
 		
 

@@ -1,0 +1,19 @@
+userlist:
+		System.out.println(arg0.getRequestURL() + "----"+ arg0.getQueryString());
+		String limit = arg0.getParameter("limit");//每页显示数量
+		String offset = arg0.getParameter("offset");
+		String order = arg0.getParameter("order");
+		String ordername = arg0.getParameter("ordername");
+		String id_search = arg0.getParameter("id_search");
+		String username_search = arg0.getParameter("username_search");
+		
+		
+		//JSONArray array = new JSONArray(nodeArray);
+		String a = "{\"total\": 800,\"rows\": [";
+		for(int i=0;i<15;i++){
+			a += "{\"id\": "+i+",\"username\": \"汤米"+i+"\",\"job\":\"<img src='http://tonyli:8080/lightweb/test1.PNG' width='30px;'>\",\"email\":\"qquey222@163.com\",\"mobilephone\":136"+i+"}";
+			if(i<15-1){
+				a+= ",";
+			}
+		}
+			a += "]}";
