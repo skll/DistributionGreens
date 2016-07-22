@@ -1,0 +1,23 @@
+bootstrapValidator注意事项：
+	要注意版本的问题，针对bootstrap2和bootstrap3有不同的版本。
+	1、为每个要验证的表单元素添加name属性
+	2、为保持良好的效果，表单元素最好放在div.form-group里面
+	3、防止表单重复提交问题
+		例1：此时可以给表单一个class,如validation-form，在js主函数里面调用$("form.validation-form").bootstrapValidator();将验证器置空即可
+		例2：$("#yourform").submit(function(ev){ev.preventDefault();});
+			$("#submit").on("click", function(){
+			
+			   var bootstrapValidator = $("#yourform").data('bootstrapValidator');
+			   bootstrapValidator.validate();
+			   if(bootstrapValidator.isValid())
+			     $("#yourform").submit();
+			   else return;
+			
+			});
+			
+
+bootstrapValidator自定义校验name字段：
+	account--账号验证（注意验证URL）
+	username--姓名验证
+	email--邮箱验证
+	mobilephone--手机号码验证
