@@ -4,172 +4,170 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
-    <title>用户管理</title>
-    
-    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../bootstrap-table/bootstrap-table.css">
-    <link rel="stylesheet" href="../../bootstrap/validator/css/bootstrapValidator.min.css">
-
-    <script src="../../styles/js/jquery.min.js"></script>
-    <script src="../../bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../bootstrap-table/bootstrap-table.js"></script>
-    <script src="../../bootstrap-table/mobile/bootstrap-table-mobile.js"></script>
-    <script src="../../bootstrap-table/bootstrap-table-zh-CN.js"></script>
-    <script src="../../bootstrap/validator/js/bootstrapValidator.min.js"></script>
-    <script src="../../bootstrap/validator/js/language/zh_CN.js"></script>
-    
+	<title>用户管理</title>
+	<script src="../../styles/js/jquery.min.js"></script>
+	
+	<!--加载 bootstrap 组件 -->
+	<script src="../../bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+	<!--加载 bootstrap-table组件 -->
+	<script src="../../bootstrap-table/bootstrap-table.js"></script>
+	<script src="../../bootstrap-table/bootstrap-table-zh-CN.js"></script>
+	<link rel="stylesheet" href="../../bootstrap-table/bootstrap-table.css">
+	<!--加载 bootstrap-table手机试图 组件 -->
+	<script src="../../bootstrap-table/mobile/bootstrap-table-mobile.js"></script>
+	<!--加载 bootstrap校验 组件 -->
+	<script src="../../bootstrap/validator/js/bootstrapValidator.min.js"></script>
+	<script src="../../bootstrap/validator/js/language/zh_CN.js"></script>
+	<link rel="stylesheet" href="../../bootstrap/validator/css/bootstrapValidator.min.css">
+	
+	<script src="../../bootstrap/validator/js/bootstrapValidatorForm.js"></script>
 </head>
 <body>
-<div class="container">
-	<div id="toolbar">
-		<div class="form-inline" role="form">
-			<div class="form-group">
-				<input id="id_search" class="form-control" style="width:150px;" type="text" placeholder="请输入ID">
-			</div>
-			<div class="form-group">
-				<input id="username_search" class="form-control" style="width:150px;" type="text" placeholder="请输入姓名">
-			</div>
-
-			<button id="searchSubmit" type="button" class="btn btn-default">搜索</button>
-			<button id="clearSearch" type="button" class="btn btn-default">清空</button>
+	<div class="container">
+		<!--工具栏	begin-->
+		<div id="toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group">
+					<input id="id_search" class="form-control" style="width:150px;" type="text" placeholder="请输入ID">
+				</div>
+				<div class="form-group">
+					<input id="username_search" class="form-control" style="width:150px;" type="text" placeholder="请输入姓名">
+				</div>
 			
-			<button id="remove" class="btn btn-danger" style="margin-left: 10px;" disabled>
-	            <i class="glyphicon glyphicon-remove"></i> 删除选中
-	        </button>
+				<button id="searchSubmit" type="button" class="btn btn-default">搜索</button>
+				<button id="clearSearch" type="button" class="btn btn-default">清空</button>
 			
-		</div>
-	</div>	
-    <table id="table"
+				<button id="remove" class="btn btn-danger" style="margin-left: 10px;" disabled>
+					<i class="glyphicon glyphicon-remove"></i> 删除选中
+				</button>
+			</div>
+		</div><!-- 工具栏 end -->
+		<!--表格	begin-->
+		<table id="table"
 			data-toolbar="#toolbar"
-           data-toggle="table"
-		   data-url="http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?"
-		   data-striped="true"
-           data-mobile-responsive="true"
-           data-check-on-init="true"
-		   data-pagination="true"
-		   data-side-pagination="server"
-           data-id-field="id"
-           data-page-list="[10, 25, 50, 100, ALL]"
-		   data-query-params="queryParams"
-		   data-id-field="id">
-        <thead>
-        <tr>
-			<th data-field="ids" data-checkbox="true"></th>
-            <th data-field="id" data-visible="false">ID</th>
-            <th data-field="username" data-sortable="true">姓名</th>
-            <th data-field="job" data-sortable="true">职务</th>
-			<th data-field="mobilephone" data-sortable="mobilephone">手机号码</th>
-			<th data-events="operateEvents" data-formatter="operateFormatter">操作</th>
-        </tr>
-        </thead>
-    </table>
-    
-    
-    
-    
-    
-    
-    	
-        <div class="modal fade" id="userDedatilModal" tabindex="-1" role="dialog" aria-labelledby="userDedatilModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                	<!--
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Modal table</h4>
-                    </div>
-                    -->
-                    <div class="modal-body">
-                    	<form id="userDedatilForm" class="form-horizontal">
-                    	  <div class="form-group sr-only">
-						    <label for="id_modal" class="col-sm-2 control-label">id：</label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="id_modal" name="id" disabled>
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="username_modal" class="col-sm-2 control-label">姓名：</label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="username_modal" name="username" >
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="job_modal" class="col-sm-2 control-label">职务：</label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="job_modal" name="job">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="email_modal" class="col-sm-2 control-label">邮箱：</label>
-						    <div class="col-sm-10">
-						      <input type="email" class="form-control email" id="email_modal" name="email" >
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="mobilephone_modal" class="col-sm-2 control-label">手机号码：</label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="mobilephone_modal" name="mobilephone">
-						    </div>
-						  </div>
+			data-toggle="table"
+			data-url="http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?"
+			data-striped="true"
+			data-mobile-responsive="true"
+			data-check-on-init="true"
+			data-pagination="true"
+			data-side-pagination="server"
+			data-id-field="id"
+			data-page-list="[10, 25, 50, 100, ALL]"
+			data-query-params="queryParams"
+			data-id-field="id">
+			<thead>
+				<tr>
+					<th data-field="ids" data-checkbox="true"></th>
+					<th data-field="id" data-visible="false">ID</th>
+					<th data-field="username" data-sortable="true">姓名</th>
+					<th data-field="job" data-sortable="true">职务</th>
+					<th data-field="mobilephone" data-sortable="mobilephone">手机号码</th>
+					<th data-events="operateEvents" data-formatter="operateFormatter">操作</th>
+				</tr>
+			</thead>
+		</table><!-- 表格 end-->
+		
+		
+		<!--模态窗口	begin-->
+		<div class="modal fade" id="userDedatilModal" tabindex="-1" role="dialog" aria-labelledby="userDedatilModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!--
+					<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Modal table</h4>
+					</div>
+					-->
+					<div class="modal-body">
+						<form id="userDedatilForm" class="form-horizontal">
+							<div class="form-group sr-only">
+								<label for="id_modal" class="col-sm-3 control-label">id：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="id_modal" name="id" disabled>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="username_modal" class="col-sm-3 control-label">姓名：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="username_modal" name="username" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="job_modal" class="col-sm-3 control-label">职务：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="job_modal" name="job">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="email_modal" class="col-sm-3 control-label">邮箱：</label>
+								<div class="col-sm-9">
+									<input type="email" class="form-control email" id="email_modal" name="email" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="mobilephone_modal" class="col-sm-3 control-label">手机号码：</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" id="mobilephone_modal" name="mobilephone">
+								</div>
+							</div>
 						</form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="userDedatilFormSubmit">提交</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        
-        
-        
-        
-</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="userDedatilFormSubmit">提交</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+	</div>
 
-<script>
-	var $table = $("#table");
-	var $searchSubmit = $("#searchSubmit");
-	var $clearSearch = $("#clearSearch");
-	var $remove = $("#remove");
-	
-	var queryParams = function (params) {
-	//alert("limit:"+params.limit+"--ooffset:"+params.offset+"----order:"+params.order+"---sort:"+params.sort+"---search:"+params.search);
-        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-            limit: params.limit,   //页面大小
-            offset: params.offset,  //页码
-            order: params.order,
-            ordername : params.sort,
-			id_search : $("#id_search").val(),
-			username_search : $("#username_search").val()
-        };
-        return temp;
-    };
-	
-	//重置table高度
-	function reView(){
-		$table.bootstrapTable('resetView', {
-			height: getHeight()
-		});
-	}
-	//获取高度
-	function getHeight(){
-		//return $(window).height()-$('h1').outerHeight(true);
-		return $(window).height();
-	}
-	
-	/**获取选中的行id数组*/
+	<script>
+		var $table = $("#table");
+		var $searchSubmit = $("#searchSubmit");
+		var $clearSearch = $("#clearSearch");
+		var $remove = $("#remove");
+		//分页传参自定义
+		var queryParams = function (params) {
+			//alert("limit:"+params.limit+"--ooffset:"+params.offset+"----order:"+params.order+"---sort:"+params.sort+"---search:"+params.search);
+			var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+						limit: params.limit,   //页面大小
+						offset: params.offset,  //页码
+						order: params.order,
+						ordername : params.sort,
+						id_search : $("#id_search").val(),
+						username_search : $("#username_search").val()
+					};
+			return temp;
+		};
+		
+		//重置table高度
+		function reView(){
+			$table.bootstrapTable('resetView', {
+				height: getHeight()
+			});
+		}
+		//获取高度
+		function getHeight(){
+			//return $(window).height()-$('h1').outerHeight(true);
+			return $(window).height();
+		}
+		
+		/**获取选中的行id数组*/
     function getIdSelections() {
-		/*遍历所选的行，返回id字段组成数组*/
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-            return row.id//返回的是id值
-        });
+			/*遍历所选的行，返回id字段组成数组*/
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+        return row.id//返回的是id值
+    });
     }
-    
-    /*绑定删除按钮点击事件*/
+	    
+    /*绑定工具栏-删除选中按钮点击事件*/
     $remove.click(function () {
         var ids = getIdSelections();//获取当前选中的所有id
-        //TODO .ajax
+        //TODO .ajax删除数据库数据，成功继续下面操作
         
         $table.bootstrapTable('remove', {//删除
             field: 'id',
@@ -178,7 +176,7 @@
         $remove.prop('disabled', true);//重置删除按钮为不可操作
         reView();
     });
-    
+	    
     /**格式化功能*/
     function operateFormatter(value, row, index) {
         return [
@@ -191,159 +189,72 @@
             '</a>'
         ].join('');
     }
-    
-    /**使用formatter功能时的监听事件*/
-    window.operateEvents = {
-        'click .modify': function (e, value, row, index) {
-        	$("#id_modal").attr("value",row.id);
-        	$("#username_modal").attr("value",row.username);
-        	$("#job_modal").attr("value",row.job);
-        	$("#email_modal").attr("value",row.email);
-        	$("#mobilephone_modal").attr("value",row.mobilephone);
-            //alert('You click like action, row: ' + JSON.stringify(row));
-        },
-        'click .remove': function (e, value, row, index) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
-            });
-        }
-    };
-    
-
-
-
-    $(function () {
-		//绑定搜索按钮
-        $searchSubmit.click(function () {
-            $table.bootstrapTable('refresh');
-        });
-		//绑定清空按钮
-		$clearSearch.click(function(){
+		/**使用formatter功能时的监听事件*/
+		window.operateEvents = {
+			'click .modify': function (e, value, row, index) {
+					$("#id_modal").attr("value",row.id);
+					$("#username_modal").attr("value",row.username);
+					$("#job_modal").attr("value",row.job);
+					$("#email_modal").attr("value",row.email);
+					$("#mobilephone_modal").attr("value",row.mobilephone);
+					//alert('You click like action, row: ' + JSON.stringify(row));
+			},
+			'click .remove': function (e, value, row, index) {
+					//TODO .ajax删除数据库数据，成功继续下面操作
+					
+					$table.bootstrapTable('remove', {
+					field: 'id',
+			    values: [row.id]
+						});
+						reView();
+					}
+		};
+	
+		$(function () {
+			//绑定搜索按钮
+			$searchSubmit.click(function () {
+			    $table.bootstrapTable('refresh');
+			});
+			//绑定清空按钮
+			$clearSearch.click(function(){
 			document.getElementById("id_search").value = "";
 			document.getElementById("username_search").value = "";
 			alert(getIdSelections());
+			});
+		
+			/*绑定事件--多选框操作事件（onCheck、onUncheck、onCheckAll、onUncheckAll）*/
+			$table.on('check.bs.table uncheck.bs.table ' +
+			'check-all.bs.table uncheck-all.bs.table', function () {
+				$remove.prop('disabled', !$table.bootstrapTable('getSelections').length);//如果没有选中有值则按钮无法操作
+				
+				// save your data, here just save the current page
+				selections = getIdSelections();//赋值
+				// push or splice the selections if you want to save all data selections
+			});
+			
+			//子页面
+			$('#userDedatilModal').on('shown.bs.modal', function () {
+				$table.bootstrapTable('resetView');
+			});
+		
+			// Validate the form manually
+			$('#userDedatilFormSubmit').click(function() {
+				$('#userDedatilForm').bootstrapValidator('validate');
+				//TODO 修改表单提交
+				
+				
+			});
+		
+			$('#resetBtn').click(function() {
+				$('#userDedatilForm').data('bootstrapValidator').resetForm(true);
+			});
 		});
+			    
+		window.onload=function(){
+			reView();
+		}
 		
-		/*绑定事件--多选框操作事件（onCheck、onUncheck、onCheckAll、onUncheckAll）*/
-        $table.on('check.bs.table uncheck.bs.table ' +
-                'check-all.bs.table uncheck-all.bs.table', function () {
-            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);//如果没有选中有值则按钮无法操作
-
-            // save your data, here just save the current page
-            selections = getIdSelections();//赋值
-            // push or splice the selections if you want to save all data selections
-        });
-		
-		//子页面
-		$('#userDedatilModal').on('shown.bs.modal', function () {
-            $table.bootstrapTable('resetView');
-        });
-
-    	// Validate the form manually
-	    $('#userDedatilFormSubmit').click(function() {
-	        $('#userDedatilForm').bootstrapValidator('validate');
-	    });
+	</script>
 	
-	    $('#resetBtn').click(function() {
-	        $('#userDedatilForm').data('bootstrapValidator').resetForm(true);
-	    });
-    });
-	window.onload=function(){ 
-		reView();
-	} 
-	
-	
-	
-</script>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#userDedatilForm').bootstrapValidator({
-//        live: 'disabled',
-        message: 'This value is not valid',
-        feedbackIcons: {
-            valid: 'glyphicon glyphicon-ok',
-            invalid: 'glyphicon glyphicon-remove',
-            validating: 'glyphicon glyphicon-refresh'
-        },
-        fields: {
-            account: {//验证input项：验证规则
-                 message: 'The account is not valid',
-                 validators: {
-                     notEmpty: {//非空验证：提示消息
-                         message: '用户名不能为空'
-                     },
-                     stringLength: {
-                         min: 6,
-                         max: 30,
-                         message: '用户名长度必须在6到30之间'
-                     },
-                     threshold :  6 , //有6字符以上才发送ajax请求，（input中输入一个字符，插件会向服务器发送一次，设置限制，6字符以上才开始）
-                     remote: {//ajax验证。server result:{"valid",true or false} 向服务发送当前input name值，获得一个json数据。例表示正确：{"valid",true}  
-                         url: 'exist2.do',//验证地址
-                         message: '用户已存在',//提示消息
-                         delay :  2000,//每输入一个字符，就发ajax请求，服务器压力还是太大，设置2秒发送一次ajax（默认输入一个字符，提交一次，服务器压力太大）
-                         type: 'POST'//请求方式
-                         /**自定义提交数据，默认值提交当前input value
-                          *  data: function(validator) {
-                               return {
-                                   password: $('[name="passwordNameAttributeInYourForm"]').val(),
-                                   whatever: $('[name="whateverNameAttributeInYourForm"]').val()
-                               };
-                            }
-                          */
-                     },
-                     regexp: {
-                         regexp: /^[a-zA-Z0-9_\.]+$/,
-                         message: '用户名由数字字母下划线和.组成'
-                     }
-                 }
-             },
-             username: {
-                validators: {
-                	notEmpty: {
-                        message: '姓名不能为空'
-                    },
-                    stringLength: {
-                         min: 2,
-                         max: 10,
-                         message: '姓名长度必须在2到10之间'
-                     },
-                }
-            },
-            email: {
-                validators: {
-                	notEmpty: {
-                        message: '邮箱不能为空'
-                    },
-                    emailAddress: {
-                        message: '请填写正确的邮箱地址'
-                    }
-                }
-            },
-            mobilephone: {
-                 message: 'The phone is not valid',
-                 validators: {
-                     notEmpty: {
-                         message: '手机号码不能为空'
-                     },
-                     stringLength: {
-                         min: 11,
-                         max: 11,
-                         message: '请输入11位手机号码'
-                     },
-                     regexp: {
-                         regexp: /^1[3|5|8]{1}[0-9]{9}$/,
-                         message: '请输入正确的手机号码'
-                     }
-                 }
-             }
-        }
-    });
-
-});
-</script>
-
 </body>
 </html>

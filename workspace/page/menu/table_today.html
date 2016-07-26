@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Table</title>
+
+		<link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+		<script src="../../styles/js/jquery.min.js"></script>
+		<script src="../../bootstrap/js/bootstrap.min.js"></script>
+	
+	<style>
+	.table input{width:50px;}
+	.wd1{width:50px;}.wd2{width:100px;}
+	</style>
+	
+	<script>
+	/*
+		$(function(){	
+
+			//简写形式，效果相同
+			$.getJSON("http://tonyli:8080/lightweb/module1/initgrid.do?jsonpCallback=?",
+					function(data){
+						alert("Result:"+data.result)
+			});
+
+		});
+	*/	
+	</script>
+	</head>
+
+	<body>
+		<div class="container-fluid" style="margin-top:5px;">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel-group" id="menuPanel">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<a class="panel-title" data-toggle="collapse" data-parent="#menuPanel" href="#menuPanel-1">A-种类</a>
+							</div>
+							<div id="menuPanel-1" class="panel-collapse collapse in">
+
+											<table class="table table-hover" id="A-种类">
+												<thead>
+													<tr>
+														<th>编号</th>
+														<th>产品</th>
+														<th>单位</th>
+														<th>单价</th>
+														<th>×</th>
+														<th>数量</th>
+													</tr>
+												</thead>
+												
+											</table>
+
+							</div>
+						</div>
+						
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<a class="panel-title" data-toggle="collapse" data-parent="#menuPanel" href="#menuPanel-2">B-种类</a>
+							</div>
+							<div id="menuPanel-2" class="panel-collapse collapse">
+
+											<table class="table table-hover" id="B-种类">
+												<thead>
+													<tr>
+														<th>编号</th>
+														<th>产品</th>
+														<th>单位</th>
+														<th>单价</th>
+														<th>×</th>
+														<th>数量</th>
+													</tr>
+												</thead>
+												
+											</table>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+		
+			</div>
+
+		
+		</div>
+			
+	</body>
+
+</html>

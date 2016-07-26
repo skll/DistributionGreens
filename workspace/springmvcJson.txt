@@ -17,3 +17,6 @@ userlist:
 			}
 		}
 			a += "]}";
+
+menu:
+		version
