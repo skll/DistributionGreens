@@ -1,0 +1,151 @@
+public String addLogo(){
+	String extName = ""; // 保存文件拓展名  
+    String newFileName = ""; // 保存新的文件名  
+    String nowTimeStr = ""; // 保存当前时间  
+//  //重命名图片名称
+//  logoFileName=System.currentTimeMillis()+logoFileName;
+//  //获得upload的绝对路径
+//  String realPath = ServletActionContext.getServletContext().getRealPath("uploadImages");
+//  //获得该图片的绝对路径
+//  File file = new File(new File(realPath), logoFileName);
+	PrintWriter out = null; 
+	SimpleDateFormat sDateFormat; 
+	Random r = new Random(); 
+	String savePath = ServletActionContext.getServletContext().getRealPath("/"); // 获取项目根路径  
+	savePath = savePath.replace("\", "\\\\");
+	savePath = savePath + "\\\\uploadImages\\\\";
+	HttpServletResponse response = ServletActionContext.getResponse();
+	HttpServletRequest request = ServletActionContext.getRequest();
+	response.setCharacterEncoding("gbk"); // 务必，防止返回文件名是乱码  
+	// 生成随机文件名：当前年月日时分秒+五位随机数（为了在实际项目中防止文件同名而进行的处理）  
+	int rannum = (int) (r.nextDouble() * (99999 - 10000 + 1)) + 10000; // 获取随机数  
+	sDateFormat = new SimpleDateFormat("yyyyMMddHHmmss"); // 时间格式化的格式  
+	nowTimeStr = sDateFormat.format(new Date()); // 当前时间  
+	// 获取拓展名  
+	if (logoFileName.lastIndexOf(".") >= 0) { 
+		extName = logoFileName.substring(logoFileName 
+				.lastIndexOf(".")); 
+	} 
+	HttpSession session = request.getSession();
+	try{
+		String powerStr = session.getAttribute("power").toString();
+		int power=0;
+		if(powerStr==null){
+			request.setAttribute("failMsg", "异常操作，用户已退出，请重新登录！");
+			return "login";
+		}else{
+			power = Integer.parseInt(powerStr);
+		}
+		if(power==2){
+    
+			out = response.getWriter(); 
+			newFileName = nowTimeStr + rannum + extName; // 文件重命名后的名字  
+			String filePath = savePath +newFileName; 
+			filePath  = filePath .replace("\", "\\\\");
+		//            String filePathm = savePath +"mdpi_"+ newFileName; 
+		//            filePathm = filePathm.replace("//", "/");
+		//            String filePathl = savePath +"ldpi_"+ newFileName; 
+		//            filePathl = filePathl.replace("//", "/");
+		//            FileInputStream ins = new FileInputStream(fileupload);
+		//            System.out.println(ins.available());
+		//            BufferedImage bi = ImageIO.read(fileupload);;
+		//            System.out.println(bi.getWidth());
+		//            System.out.println(bi.getHeight());
+    
+			//检查上传的是否是图片  
+			boolean flagImage=false;
+			if (UtilCommon.checkIsImage(extName)) {
+				FileInputStream ins = new FileInputStream(logo);
+				BufferedImage bi = ImageIO.read(logo);
+				if(ins.available()>3*1024*1024){
+					out.print("图片大小为"+ins.available()/(1024*1024)+"M"+"，不应超高3M!");
+				}else if(bi.getWidth()<150 || bi.getHeight()<100){
+					out.print("图片宽度为："+bi.getWidth()+"，图片高度为："+bi.getHeight()+"，宽度不应低于100，高度不应低于100!");
+				}else{
+					FileUtils.copyFile(logo, new File(filePath));
+					//               FileUtils.copyFile(logo, new File(filePathm));
+					//               FileUtils.copyFile(logo, new File(filePathl));
+					//               zoom(logo, "mdpi_"+newFileName, 150, 100);
+					//               //zoom(logo, "ldpi_"+newFileName, 100, 60);
+					out.print("" + logoFileName 
+					+ "上传成功!#" + filePath + "#" + logoFileName);
+					flagImage=true;
+				}
+		 
+			} else { 
+				out.print("上传的文件类型错误，请选择jpg格式的图片!"); 
+			} 
+    
+    
+			Driver_detail detail = this.dds.getDriver_detailByDriverId(driverId);
+			if(flagImage==true){
+				if(detail==null){
+					String companyIdStr = session.getAttribute("companyId").toString();
+					int companyId = Integer.parseInt(companyIdStr);
+					Drivers drivers = this.ds.getDriversById(driverId, companyId);
+					detail = new Driver_detail();
+					detail.setDrivers(drivers);
+					detail.setImageUrl(newFileName);
+					boolean flag = dds.addDriver_detail(detail);
+				}else if(detail.getImageUrl()==null){
+					detail.setImageUrl(newFileName);
+					dds.updateDriver_detail(detail, detail.getDetailId());
+				}else{
+					String pimgurl = detail.getImageUrl();
+					//要删除的图片绝对路径
+					String imgAbl = savePath+File.separator+pimgurl;
+					//        String imgAblm = savePath+File.separator+"mdpi_"+pimgurl;
+					//        String imgAbll = savePath+File.separator+"ldpi_"+pimgurl;
+					//删除图片
+					boolean flagimg = false;
+					File file = new File(imgAbl);
+					//        File filem = new File(imgAblm);
+					//        File filel = new File(imgAbll);
+					if(pimgurl!=null){
+						flagimg=file.delete();
+						//         flagimg=filem.delete();
+						//         flagimg=filel.delete();
+					}
+					detail.setImageUrl(newFileName);
+					dds.updateDriver_detail(detail, detail.getDetailId());
+
+				}
+			}
+			out.flush(); 
+			out.close();
+			return null;
+		}else{
+			request.setAttribute("failMsg", "异常操作，用户已退出，请重新登录！");
+			return "login";
+		}
+   
+ 
+	}catch (CannotCreateTransactionException e) {
+		request.setAttribute("failMsg", "数据库连接失败,请联系管理员");
+
+	}catch (HibernateException e) {
+		request.setAttribute("failMsg", "上传Logo图片失败");
+    
+	}catch (IOException e) {
+		request.setAttribute("failMsg", "上传失败，出错啦!");
+	}catch (Exception e) {
+		request.setAttribute("failMsg", "上传Logo图片失败");
+
+	}
+	return null;
+}
+ 
+public String showImage() throws Exception { 
+	// 根据图片地址构造file对象 
+	response = ServletActionContext.getResponse();
+	File file = new File(imageUrl); 
+	InputStream is = new FileInputStream(file); 
+	Image image = ImageIO.read(is);// 读图片  
+	String imageType = imageUrl.substring(imageUrl.lastIndexOf(".") + 1);
+	RenderedImage img = (RenderedImage) image; 
+	OutputStream out = response.getOutputStream();
+	ImageIO.write(img, imageType, out); 
+	out.flush(); 
+	out.close(); 
+	return null; 
+} 

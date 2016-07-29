@@ -1,0 +1,223 @@
+一般上传图片分三步： 
+
+第一步：将原始图片上传到服务器端保存，不妨命名为src.jpg 
+
+第二步：在浏览器端将src.jpg显示出来，然后使用jQuery,对其进行“客户端剪切”。 
+
+              所谓客户端剪切就是根据用户在界面中对原始图片放大，移动，剪切时，获得一些参数。 
+
+             具体需要六个参数（srcWidth, srcHeight,  rect.x,  rect.y  , rect.width, rect.height）参数。 
+
+             其中，srcWidth 和srcHeight表明原始图片在客户端放大后的宽和高 
+
+                       rect.x和rect.y表明剪切部分相对(srcWidth, srcHeight)的起始坐标 
+
+                       rect.width和rect.height表示需要剪切的图片的大小。 
+
+第三步：获取第二步得到的参数，对内存中原始图片先进行预处理（按照srcWidth和srcHeight进行缩放）、剪切。 
+
+             然后对预处理后的内存图像剪切，打印出来。 
+
+
+
+第一步实现比较简单，第二步需要学习jQuery，网上例子很多。我们重点讨论第三步， java切图。 
+
+
+1.main函数 
+package syj.main;
+
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+
+import syj.util.ImageHepler;
+
+public class Test {
+ public static void main(String[] args) throws IOException {
+  String picPath = "img/src.jpg";
+  String destPath = "img/result.jpg";
+  Rectangle rect = new Rectangle(0, 0, 2000, 1200);
+  ImageHepler.cut(picPath, destPath, 1440, 900, rect);
+ }
+}
+
+2.关键图像操作函数 
+package syj.util;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import javax.imageio.ImageIO;
+
+public class ImageHepler { 
+
+ /**
+  * @Description: 将srcImageFile裁剪后生成destImageFile
+  * @param srcImageFile  原始图
+  * @param destImageFile  目标图
+  * @param width          原始图预处理后width
+  * @param height         原始图预处理后height
+  * @param rect           目标图输出的格式(rect.x, rect.y, rect.width, rect.height)
+  * @throws IOException
+  * @author Sun Yanjun
+  */
+ public static void cut(String srcImageFile, String destImageFile, int width, int height, Rectangle rect) throws IOException {
+  Image image = ImageIO.read(new File(srcImageFile));
+  BufferedImage bImage = makeThumbnail(image, width, height);
+
+  //把原始图片输出
+  ImageIO.write(bImage, "jpg",new File("img/src2.jpg"));
+  
+  saveSubImage(bImage, rect, new File(destImageFile));
+ }
+
+ 
+ /**
+  * @Description: 将srcImageFile裁剪后生成destImageFile
+  * @param srcImageFile  原始图
+  * @param destImageFile  目标图
+  * @param width          原始图预处理后width
+  * @param height         原始图预处理后height
+  * @param rect           目标图输出的格式(rect.x, rect.y, rect.width, rect.height)
+  * @throws IOException
+  * @author Sun Yanjun
+  */
+ public static void cut(File srcImageFile, File destImageFile, int width, int height, Rectangle rect) throws IOException {
+  Image image = ImageIO.read(srcImageFile);
+  BufferedImage bImage = makeThumbnail(image, width, height);
+
+  
+  saveSubImage(bImage, rect, destImageFile);
+ }
+ 
+ /**
+  * @Description: 对原始图片根据(x, y, width, height) = (0, 0, width, height)进行缩放，生成BufferImage
+  * @param img
+  * @param width 预处理后图片的宽度
+  * @param height 预处理后图片高度
+  * @return
+  * @author Sun Yanjun
+  * @throws IOException
+  */
+ private static BufferedImage makeThumbnail(Image img, int width, int height) throws IOException {
+  BufferedImage tag = new BufferedImage(width, height, 1);
+  Graphics g = tag.getGraphics();
+  g.drawImage(img.getScaledInstance(width, height, 4), 0, 0, null);
+  
+  g.dispose();
+  return tag;
+ }
+
+ /**
+  * @Description: 对BufferImage按照(x, y, width, height) = (subImageBounds.x, subImageBounds.y, subImageBounds.width, subImageBounds.height)进行裁剪
+  *               如果subImageBounds范围过大，则用空白填充周围的区域。
+  *              
+  * @param image
+  * @param subImageBounds
+  * @param destImageFile
+  * @throws IOException
+  * @author Sun Yanjun
+  */
+ private static void saveSubImage(BufferedImage image, Rectangle subImageBounds, File destImageFile) throws IOException {
+  String fileName = destImageFile.getName();
+  String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
+  BufferedImage subImage = new BufferedImage(subImageBounds.width, subImageBounds.height, 1);
+  Graphics g = subImage.getGraphics();
+  
+  
+  if ((subImageBounds.width > image.getWidth())
+    || (subImageBounds.height > image.getHeight())) {
+   int left = subImageBounds.x;
+   int top = subImageBounds.y;
+   if (image.getWidth() < subImageBounds.width)
+    left = (subImageBounds.width - image.getWidth()) / 2;
+   if (image.getHeight() < subImageBounds.height)
+    top = (subImageBounds.height - image.getHeight()) / 2;
+   g.setColor(Color.white);
+   g.fillRect(0, 0, subImageBounds.width, subImageBounds.height);
+   g.drawImage(image, left, top, null);
+   ImageIO.write(image, formatName, destImageFile);
+  } else {
+   g.drawImage(image.getSubimage(subImageBounds.x, subImageBounds.y,
+     subImageBounds.width, subImageBounds.height), 0, 0, null);
+  }
+  g.dispose();
+  ImageIO.write(subImage, formatName, destImageFile);
+ }
+}
+
+ 
+
+3.一个域对象，获取剪切信息 
+package syj.vo;
+
+public class ImageVo {
+ 
+    private int txt_width;
+    private int txt_height;
+    private int txt_top;
+    private int txt_left;
+    private int txt_DropWidth;
+    private int txt_DropHeight;
+    private float imageZoom;
+    private String picture;
+   
+ public int getTxt_width() {
+  return txt_width;
+ }
+ public void setTxt_width(int txtWidth) {
+  txt_width = txtWidth;
+ }
+ public int getTxt_height() {
+  return txt_height;
+ }
+ public void setTxt_height(int txtHeight) {
+  txt_height = txtHeight;
+ }
+ public int getTxt_top() {
+  return txt_top;
+ }
+ public void setTxt_top(int txtTop) {
+  txt_top = txtTop;
+ }
+ public int getTxt_left() {
+  return txt_left;
+ }
+ public void setTxt_left(int txtLeft) {
+  txt_left = txtLeft;
+ }
+ public int getTxt_DropWidth() {
+  return txt_DropWidth;
+ }
+ public void setTxt_DropWidth(int txtDropWidth) {
+  txt_DropWidth = txtDropWidth;
+ } 
+ public float getImageZoom() {
+  return imageZoom;
+ }
+ public void setImageZoom(float imageZoom) {
+  this.imageZoom = imageZoom;
+ }
+ public void setPicture(String picture) {
+  this.picture = picture;
+ }
+ public String getPicture() {
+  return picture;
+ }
+ public void setTxt_DropHeight(int txt_DropHeight) {
+  this.txt_DropHeight = txt_DropHeight;
+ }
+ public int getTxt_DropHeight() {
+  return txt_DropHeight;
+ } 
+}
+
+
+          
+
+
