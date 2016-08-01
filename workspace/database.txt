@@ -1,0 +1,120 @@
+1、userinfo
+	id
+	account-账号
+	password-密码
+	username-姓名
+	job-职务
+	email-邮箱
+	mobilephone-手机号码
+	creater
+	createtime
+	status-(0无效，1有效)
+	sort-排序
+	
+2、menuCategory--菜单种类
+	id
+	name-名称
+	description-描述
+	parentid-父id(上一级id)
+	creater
+	createtime
+	updater
+	updatetime
+	status-(0无效，1有效)
+	codenum-编号(char转换成字母)
+	sort-排序
+	
+3、menuCategoryDetail--种类详情
+	id
+	parentid-父id(菜单种类id)
+	version-版本号
+	name-名称
+	description-描述
+	unit-单位
+	price-价格
+	lastprice-上一次价格
+	-产地
+	creater
+	createtime
+	updater
+	updatetime
+	sort-排序
+	
+4、versions--种类详情版本号
+	id
+	type-版本号类型
+	version-版本号
+	
+	
+	
+	
+5、order--订单
+	id
+	orderdata-订单日期
+	createtime
+	creater
+	updatetime
+	updater
+	approver-审批人
+	status-状态（0待审批、1审批通过、2待修改、3完结）
+	
+6、orderDetail--订单详情
+	id
+	orderid-订单id
+	menucategorydatilid-种类id
+	quantity-数量
+	confirmerid-确认人
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
